@@ -1,5 +1,5 @@
 # News-App
-This project use flutter **3.22.2** \n
+This project use flutter **3.22.2** <br/>
 Before run project, run following commands:
 
 ```
