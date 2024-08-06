@@ -14,11 +14,17 @@ class AsyncNewsList extends _$AsyncNewsList {
   FutureOr<List<Article>> build() async {
     final repository = ref.watch(newsListRepositoryProvider);
 
-    final response = repository.value;
-    return switch (response) {
-    LoadedState() => response.articles,
-    ErrorState() => throw AsyncError(response.message, StackTrace.empty),
-    _ => throw const AsyncError('Unknown error', StackTrace.empty),
-    };
+    return repository.map(
+      data: (data) {
+        final state = data.value;
+        return switch (state) {
+          LoadedState() => state.articles,
+          ErrorState() => throw AsyncError(state.message, StackTrace.empty),
+        };
+      },
+      error: (error) => throw AsyncError(error.toString(), StackTrace.empty),
+      loading: (_) => throw const AsyncValue
+          .loading(), // Or handle loading differently if needed
+    );
   }
 }
