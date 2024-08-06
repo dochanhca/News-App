@@ -2,29 +2,21 @@ import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../datasource/network/news_api.dart';
-import '../model/news_model.dart';
+import '../model/news_state.dart';
 
-part 'news_repository.g.dart';
+part 'news_list_repository.g.dart';
 
 class AbortedException implements Exception {}
 
 @riverpod
-class NewsList extends _$NewsList {
-  @override
-  Future<List<Article>> build() async {
+Future<NewsState> newsListRepository(NewsListRepositoryRef ref) async {
     final cancelToken = CancelToken();
     ref.onDispose(cancelToken.cancel);
 
     // Debouncing the request.
-    await Future<void>.delayed(const Duration(milliseconds: 300));
+    await Future<void>.delayed(const Duration(milliseconds: 500));
     if (cancelToken.isCancelled) throw AbortedException();
 
     final newsApi = ref.watch(newsApiProvider(enableCache: true));
-    final newsState = newsApi.fetchNewsList(cancelToken: cancelToken);
-    return AsyncError(error, stackTrace);
+    return newsApi.fetchNewsList(cancelToken: cancelToken);
   }
-
-  Future<List<Article>> searchNews(String keywork) {
-    return Future.value([]);
-  }
-}

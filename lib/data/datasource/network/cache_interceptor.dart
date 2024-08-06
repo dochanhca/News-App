@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 
@@ -17,6 +18,18 @@ class CacheInterceptor implements Interceptor {
     required String path,
   }) =>
       baseUrl + path;
+
+  Future<bool> isNetworkConnected() async {
+    try {
+      final result = await InternetAddress.lookup('https://newsapi.org');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } on SocketException catch (_) {
+      log('Can not connect to https://newsapi.org');
+    }
+    return false;
+  }
 
   /// Method that intercepts Dio error
   @override
@@ -38,12 +51,15 @@ class CacheInterceptor implements Interceptor {
 
   /// Method that intercepts Dio request
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final databaseKey = createdatabaseKey(
       baseUrl: options.baseUrl,
       path: options.path,
     );
-    if (database.has(databaseKey)) {
+    bool hasNetwork = await isNetworkConnected();
+
+    /// if can't connect to https://newsapi.org/, try to get news from db
+    if (!hasNetwork && database.has(databaseKey)) {
       final cachedResponse = _getCachedResponse(databaseKey);
       if (cachedResponse != null) {
         log('Retrieved response from cache on Request');
