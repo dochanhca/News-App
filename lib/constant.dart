@@ -3,4 +3,6 @@ class Constant {
 
   static const Duration maxCacheTime =  Duration(days: 1);
 
+  static const String favoriteBoxKey = 'favoriteBoxKey';
+
 }

@@ -1,3 +1,4 @@
+
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,7 +14,7 @@ part 'news_api.g.dart';
 @riverpod
 NewsApi newsApi(
   NewsApiRef ref, {
-  bool enableCache = true,
+  required bool enableCache,
 }) {
   if (enableCache = true) {
     final database = ref.watch(hiveDatabaseProvider);
@@ -29,7 +30,7 @@ NewsApi newsApi(
 class NewsApi {
   NewsApi({
     HiveDatabase? database,
-    bool enableCaching = true,
+    required bool enableCaching,
   }) : assert((enableCaching == false || database != null),
             'when enable cache, database can not null') {
     dio = Dio(BaseOptions(
@@ -49,25 +50,25 @@ class NewsApi {
     CancelToken? cancelToken,
   }) async {
     final url =
-        "top-headlines?country=us&apiKey=${Constant.newsApiKey}&q=$keyword";
+        "top-headlines?country=in&apiKey=${Constant.newsApiKey}&q=$keyword";
     try {
       final response = await dio.get(
         url,
         cancelToken: cancelToken,
       );
-      if (response.statusCode == 200) {
-        final newsResponse = NewsApiResponse.fromRawJson(response.data);
+      if (response.statusCode == 200 && response.data != null) {
+        final newsResponse = NewsApiResponse.fromJson(response.data);
         return LoadedState(newsResponse.articles);
       } else {
         final newsApiError = NewsApiError.fromRawJson(response.data);
         return ErrorState(
-          code: newsApiError.code ?? response.statusCode?.toString() ?? '502',
+          code: newsApiError.code ?? response.statusCode?.toString() ?? '999',
           message:
-              newsApiError.message ?? response.statusMessage ?? 'unKnow error',
+              newsApiError.message ?? response.statusMessage ?? 'unknown error',
         );
       }
     } catch (e) {
-      return ErrorState(code: '999', message: 'unKnow error');
+      return ErrorState(code: '999', message: 'unknown error');
     }
   }
 }
