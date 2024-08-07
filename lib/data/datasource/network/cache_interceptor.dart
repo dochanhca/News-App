@@ -13,7 +13,7 @@ class CacheInterceptor implements Interceptor {
   final HiveDatabase database;
 
   /// storage key: 'https://newsapi.org/v2/top-headlines?country=us&apiKey=e5867d0db77b4395891bb4c4a73066bb'
-  String createdatabaseKey({
+  String createBoxKey({
     required String baseUrl,
     required String path,
   }) =>
@@ -21,7 +21,7 @@ class CacheInterceptor implements Interceptor {
 
   Future<bool> isNetworkConnected() async {
     try {
-      final result = await InternetAddress.lookup('https://newsapi.org');
+      final result = await InternetAddress.lookup('newsapi.org');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
         return true;
       }
@@ -34,14 +34,14 @@ class CacheInterceptor implements Interceptor {
   /// Method that intercepts Dio error
   @override
   void onError(DioException exception, ErrorInterceptorHandler handler) {
-    final databaseKey = createdatabaseKey(
+    final databaseKey = createBoxKey(
       baseUrl: exception.requestOptions.baseUrl,
       path: exception.requestOptions.path,
     );
     if (database.has(databaseKey)) {
       final cachedResponse = _getCachedResponse(databaseKey);
       if (cachedResponse != null) {
-        log('📦 📦 📦 Retrieved response from cache');
+        log('Retrieved response from cache');
         final response = cachedResponse.buildResponse(exception.requestOptions);
         return handler.resolve(response);
       }
@@ -51,8 +51,9 @@ class CacheInterceptor implements Interceptor {
 
   /// Method that intercepts Dio request
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final databaseKey = createdatabaseKey(
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final databaseKey = createBoxKey(
       baseUrl: options.baseUrl,
       path: options.path,
     );
@@ -76,9 +77,8 @@ class CacheInterceptor implements Interceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
-    if (response.statusCode != null &&
-        response.statusCode! == 200) {
-      log('Retrieved response from network');
+    if (response.statusCode != null && response.statusCode! == 200) {
+      log('Retrieved response from: ${response.requestOptions.baseUrl}${response.requestOptions.path}');
       log('Response data: ${response.data}');
 
       final cachedResponse = CachedResponse(
@@ -87,7 +87,7 @@ class CacheInterceptor implements Interceptor {
         cachedTime: DateTime.now(),
         statusCode: response.statusCode!,
       );
-      final databaseKey = createdatabaseKey(
+      final databaseKey = createBoxKey(
         baseUrl: response.requestOptions.baseUrl,
         path: response.requestOptions.path,
       );
@@ -100,8 +100,7 @@ class CacheInterceptor implements Interceptor {
     final dynamic rawCachedResponse = database.get(databaseKey);
     try {
       final cachedResponse = CachedResponse.fromJson(
-        json.decode(json.encode(rawCachedResponse)) as Map<String, dynamic>,
-      );
+          json.decode(json.encode(rawCachedResponse)) as Map<String, dynamic>);
       if (cachedResponse.isValid) {
         return cachedResponse;
       } else {

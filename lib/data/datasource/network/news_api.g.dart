@@ -6,7 +6,7 @@ part of 'news_api.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$newsApiHash() => r'22a85c841c0dacb97007f4a1ec8d5a92fdbd8394';
+String _$newsApiHash() => r'ad862fb84a8b445bd5aee40bdab8ffe9695e1ff7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -40,7 +40,7 @@ class NewsApiFamily extends Family<NewsApi> {
 
   /// See also [newsApi].
   NewsApiProvider call({
-    bool enableCache = true,
+    required bool enableCache,
   }) {
     return NewsApiProvider(
       enableCache: enableCache,
@@ -75,7 +75,7 @@ class NewsApiFamily extends Family<NewsApi> {
 class NewsApiProvider extends AutoDisposeProvider<NewsApi> {
   /// See also [newsApi].
   NewsApiProvider({
-    bool enableCache = true,
+    required bool enableCache,
   }) : this._internal(
           (ref) => newsApi(
             ref as NewsApiRef,

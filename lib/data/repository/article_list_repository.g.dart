@@ -1,26 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'news_list_provider.dart';
+part of 'article_list_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$asyncNewsListHash() => r'655edd126386f521996e3ee72666ce470d5ef7ca';
+String _$articleListRepositoryHash() =>
+    r'1d8daa2d8a4352a9b96b9917e92a9c5a4ec9217a';
 
-/// See also [AsyncNewsList].
-@ProviderFor(AsyncNewsList)
-final asyncNewsListProvider =
-    AutoDisposeAsyncNotifierProvider<AsyncNewsList, List<Article>>.internal(
-  AsyncNewsList.new,
-  name: r'asyncNewsListProvider',
+/// See also [articleListRepository].
+@ProviderFor(articleListRepository)
+final articleListRepositoryProvider =
+    AutoDisposeFutureProvider<NewsState>.internal(
+  articleListRepository,
+  name: r'articleListRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$asyncNewsListHash,
+      : _$articleListRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AsyncNewsList = AutoDisposeAsyncNotifier<List<Article>>;
+typedef ArticleListRepositoryRef = AutoDisposeFutureProviderRef<NewsState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

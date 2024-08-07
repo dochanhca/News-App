@@ -4,12 +4,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../datasource/network/news_api.dart';
 import '../model/news_state.dart';
 
-part 'news_list_repository.g.dart';
+part 'article_list_repository.g.dart';
 
 class AbortedException implements Exception {}
 
 @riverpod
-Future<NewsState> newsListRepository(NewsListRepositoryRef ref) async {
+Future<NewsState> articleListRepository(ArticleListRepositoryRef ref) async {
     final cancelToken = CancelToken();
     ref.onDispose(cancelToken.cancel);
 

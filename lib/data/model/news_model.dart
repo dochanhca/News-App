@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
+
+import 'package:intl/intl.dart';
 
 class NewsApiError {
   NewsApiError({
@@ -58,38 +61,60 @@ class Article {
     this.content,
   });
 
-  late final Source source;
-  late final String? author;
-  late final String title;
-  late final String? description;
-  late final String url;
-  late final String? urlToImage;
-  late final String publishedAt;
-  late final String? content;
+  final Source source;
+  final String? author;
+  final String title;
+  final String? description;
+  final String url;
+  final String? urlToImage;
+  final String publishedAt;
+  final String? content;
 
-  Article.fromJson(Map<String, dynamic> json) {
-    source = Source.fromJson(json['source']);
-    author = json['author'];
-    title = json['title'];
-    description = json['description'];
-    url = json['url'];
-    urlToImage = json['urlToImage'];
-    publishedAt = json['publishedAt'];
-    content = json['content'];
+  factory Article.fromJson(Map<String, dynamic> json) => Article(
+        source: Source.fromJson(json['source']),
+        author: json['author'],
+        title: json['title'],
+        description: json['description'],
+        url: json['url'],
+        urlToImage: json['urlToImage'],
+        publishedAt: json['publishedAt'],
+        content: json['content'],
+      );
+
+  String get publishedDate {
+    final formatter = DateFormat('dd/MM/yyyy');
+    try {
+      String formatted = formatter.format(DateTime.parse(publishedAt));
+      return formatted;
+    } catch (e) {
+      log('parse publishedAt($publishedAt) error: e');
+      return '';
+    }
+  }
+
+  String get publishedTime {
+    final formatter = DateFormat('dd/MM/yyyy HH:mm');
+    try {
+      String formatted = formatter.format(DateTime.parse(publishedAt));
+      return formatted;
+    } catch (e) {
+      log('parse publishedAt($publishedAt) error: e');
+      return '';
+    }
   }
 }
 
 class Source {
   Source({
-    required this.id,
-    required this.name,
+     this.id,
+     this.name,
   });
 
-  late final String id;
-  late final String name;
+  final String? id;
+  final String? name;
 
-  Source.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-  }
+  factory Source.fromJson(Map<String, dynamic> json) => Source(
+        id: json['id'],
+        name: json['name'],
+      );
 }
