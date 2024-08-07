@@ -4,5 +4,5 @@ Before run project, run following commands:
 
 ```
 1. flutter pub get
-2. dart run build_runner build
+2. dart run build_runner build -d
 ```
